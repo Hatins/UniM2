@@ -1,7 +1,7 @@
 # UMSS:Towards Unsupervised Multimodal Semantic Segmentation
 
 <p align="center">
-  <img src="Figures/framework.png" alt="UniM2 framework" width="95%">
+  <img src="Figures/framework.png" alt="UniM2 framework" width="75%">
 </p>
 
 <p align="center">
@@ -43,15 +43,15 @@ conda activate UMSS
 
 ## Datasets
 
-Please download each dataset from its official release page and place it under
-`data/` as shown below. If your datasets live elsewhere, keep the same internal
-folder structure and pass `pytorch_data_dir=/your/path`.
+Please download the prepared dataset archives from our OneDrive links and place
+them under `data/` as shown below. If your datasets live elsewhere, keep the
+same internal folder structure and pass `pytorch_data_dir=/your/path`.
 
 | Dataset | Download | Modalities Used | Config Key | Expected Root |
 | :-- | :-- | :-- | :-- | :-- |
-| **[NYU Depth V2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)** | **[Official Page](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)** | RGB + HHA/depth | `dataset_name: nyu` | `data/NYU_Depth/nyu` |
-| **[MFNet](https://github.com/haqishen/MFNet-pytorch)** | **[Google Drive](https://drive.google.com/drive/folders/18BQFWRfhXzSuMloUmtiBRFrr6NSrf8Fw?usp=sharing)** | RGB + thermal | `dataset_name: mfnet` | `data/MFNet/mfnet` |
-| **[MCubeS](https://github.com/kyotovision-public/multimodal-material-segmentation)** | **[Google Drive](https://drive.google.com/file/d/14egTCyC0Pampb7imrXVwaDRffHN7FZxh/view?usp=sharing)** | RGB + AoLP/DoLP/NIR | `dataset_name: mcubes` | `data/MCUBES/MCubeS` |
+| **[NYU Depth V2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)** | **[OneDrive](https://entuedu-my.sharepoint.com/:u:/r/personal/haitian003_e_ntu_edu_sg/Documents/Project-Datasets-and-Checkpoints/UMSS/Datasets/NYU_Depth.zip?csf=1&web=1&e=7A4yoL)** | RGB + HHA/depth | `dataset_name: nyu` | `data/NYU_Depth/nyu` |
+| **[MFNet](https://github.com/haqishen/MFNet-pytorch)** | **[OneDrive](https://entuedu-my.sharepoint.com/:u:/r/personal/haitian003_e_ntu_edu_sg/Documents/Project-Datasets-and-Checkpoints/UMSS/Datasets/MFNet.zip?csf=1&web=1&e=qgCWpa)** | RGB + thermal | `dataset_name: mfnet` | `data/MFNet/mfnet` |
+| **[MCubeS](https://github.com/kyotovision-public/multimodal-material-segmentation)** | **[OneDrive](https://entuedu-my.sharepoint.com/:u:/r/personal/haitian003_e_ntu_edu_sg/Documents/Project-Datasets-and-Checkpoints/UMSS/Datasets/MCUBES.zip?csf=1&web=1&e=85hZ7y)** | RGB + AoLP/DoLP/NIR | `dataset_name: mcubes` | `data/MCUBES/MCubeS` |
 
 The expected project layout is:
 
