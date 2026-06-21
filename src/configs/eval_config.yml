@@ -1,0 +1,24 @@
+output_root: "."
+pytorch_data_dir: "data/NYU_Depth"
+
+
+experiment_name: "UniM2_eval"
+result_dir: "results/UniM2_eval"
+gpu_ids: "0"
+image_set: "val"
+eval_crop_type: null
+res: 320
+batch_size: 16
+num_workers: 4
+num_vis_images: 8
+
+run_crf: true
+crf_num_workers: 4
+
+model_paths:
+  - "save_checkpoints/nyu/step=8715-mIoU=38.11.ckpt"
+
+hydra:
+  run:
+    dir: ${output_root}
+  output_subdir: null

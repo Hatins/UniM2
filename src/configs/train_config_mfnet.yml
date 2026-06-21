@@ -1,0 +1,128 @@
+output_root: "."
+pytorch_data_dir: "data/MFNet"
+
+log_dir: "UniM2"
+
+project_name: "UniM2"
+entity: null
+group: "UniM2"
+
+num_workers: 16
+max_steps: 13000  # Must match hyperparameter search max_steps!
+
+# Hyperparameter search settings
+search_dataloader_seed: False  # Whether to search for optimal dataloader seed (0-20) during hyperparameter search
+search_only_seed: False  # If True, fix all other hyperparameters and only search for dataloader seed (requires search_dataloader_seed=True)
+
+search_lr: True  # Whether to search for optimal learning rate during hyperparameter search (True: search, False: fixed)
+
+
+##############Adjust Parameters Here##############
+experiment_name: "UniM2_MFNet"
+batch_size: 32
+val_batch_size: 16  # Validation/test batch size (reduce if CUDA out of memory)
+
+gpu_ids: '1'
+model_type: "vit_base"
+dino_version: "v3"
+dino_patch_size: 16
+
+modals: ['rgb', 'thermal']  # Options: 'rgb', 'thermal' (thermal is treated as 'depth' internally for compatibility)
+mfnet_num_classes: 8  # MFNet has 8 classes (car, person, bike, curve, car_stop, guardrail, color_cone, bump)
+
+# Fusion settings for multi-modal
+modality_fusion_method: "conv"  # Options: "sum", "mean", "max", "conv"
+modality_fusion_output_dim: 768  # Output dimension for conv fusion (must match n_feats=384 for vit_small 768 for base)
+use_modal_projection_head: True
+# Alignment ablation: control whether each modality uses soft (projected) or hard alignment
+# Modes:
+#   Default (RGB hard, non-RGB soft): rgb_use_soft_alignment=False, nonrgb_use_soft_alignment=True
+#   All soft:                         rgb_use_soft_alignment=True,  nonrgb_use_soft_alignment=True
+#   RGB soft, others hard:            rgb_use_soft_alignment=True,  nonrgb_use_soft_alignment=False
+rgb_use_soft_alignment: False
+nonrgb_use_soft_alignment: True
+
+dino_feat_type: "ori"
+dim: 90
+search_dim: False  # Whether to search for optimal dim during hyperparameter search (True: search, False: fixed)
+
+# Feature normalization before fusion
+normalize_before_fusion: True  # Whether to normalize features before fusion
+normalization_type: "l2"  # Options: "l2", "standardize", "minmax"
+
+# Modality-specific weighting for loss calculation
+use_modality_weight: False  # Global switch for modality weighting
+rgb_use_weight: False  # Whether RGB modality uses weight (thermal/depth always uses weight when use_modality_weight=True)
+weight_activation: "tanh"  # Options: "sigmoid", "tanh", "relu", "softmax"
+###############################################
+
+#######################
+# RGB modality weights (default values, to be tuned)
+rgb_pos_inter_weight: 0.3334
+rgb_pos_intra_weight: 0.0606
+rgb_neg_inter_weight: 0.9262
+rgb_neg_inter_shift: 0.7760
+rgb_pos_inter_shift: 0.7800
+rgb_pos_intra_shift: 0.9607
+rgb_weight: 0.0478
+thermal_pos_inter_weight: 0.9124
+thermal_pos_intra_weight: 0.2388
+thermal_neg_inter_weight: 0.5064
+thermal_neg_inter_shift: 0.5540
+thermal_pos_inter_shift: 0.2864
+thermal_pos_intra_shift: 0.0096
+thermal_weight: 0.4922
+lr: 7.88e-05
+########################
+
+# pretrained_weights: "pretrained/dinov3_vits16_pretrain_lvd1689m-08c60483.pth"
+pretrained_weights: "pretrained/dinov3_vitb16_pretrain_lvd1689m-73cec8be.pth"
+# pretrained_weights: "pretrained/dinov3_vits16plus_pretrain_lvd1689m-4057cbaa.pth"
+
+num_neighbors: 7
+dataset_name: "mfnet"
+
+use_modality_residual: False
+crop_type: "five"
+crop_ratio: .5
+res: 224
+loader_crop_type: "center"
+val_crop_type: null
+val_res: 320
+
+extra_clusters: 0
+use_true_labels: False
+
+arch: "dino"
+projection_type: "nonlinear"
+
+continuous: True
+
+dropout: True
+zero_clamp: True
+
+use_salience: False
+stabalize: False
+
+pointwise: True
+feature_samples: 11
+neg_samples: 5
+
+correspondence_weight: 1.0
+
+rec_weight: 0.0
+
+reset_probe_steps: ~
+
+scalar_log_freq: 10
+eval_every_n_epochs: 1
+val_freq: 10
+
+hydra:
+  run:
+    dir: ${output_root}
+  output_subdir: null
+  job_logging:
+    handlers:
+      file:
+        filename: ${output_root}/logs/${hydra.job.name}.log

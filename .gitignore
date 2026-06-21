@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.log
+.vscode/
+
+/data/
+/models/
+/pretrained/
+/checkpoints/
+/save_checkpoints/
+/logs/
+/results/
+/wandb/
+/optuna/
+/optuna_results/
+
+src/.env
