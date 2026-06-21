@@ -1,34 +1,89 @@
-# UniM2: Unsupervised Multimodal Semantic Segmentation
+# UMSS:Towards Unsupervised Multimodal Semantic Segmentation
 
-This repository contains the code for **UniM2** on the **UMSS** task.
+<p align="center">
+  <img src="Figures/framework.png" alt="UniM2 framework" width="95%">
+</p>
 
-The codebase has been simplified for the released workflow and keeps only the
-datasets used in the paper:
+<p align="center">
+  <b>Official code for UniM2 on the UMSS task.</b>
+</p>
 
-- NYU Depth V2 (`nyu`)
-- MFNet (`mfnet`)
-- MCubeS (`mcubes`)
+<p align="center">
+  <a href="#environments"><b>Environments</b></a> |
+  <a href="#datasets"><b>Datasets</b></a> |
+  <a href="#data-preparation"><b>Data Preparation</b></a> |
+  <a href="#hyperparameter-search"><b>Hyperparameter Search</b></a> |
+  <a href="#training"><b>Training</b></a> |
+  <a href="#evaluation"><b>Evaluation</b></a>
+</p>
 
-Datasets, checkpoints, and DINOv3 pretrained weights are assumed to be downloaded already.
-The default configs use project-relative paths:
+This repository has been simplified for the released workflow. It keeps the
+three datasets used in the paper: **NYU Depth V2**, **MFNet**, and **MCubeS**.
+
+Datasets, checkpoints, and DINOv3 pretrained weights are not included in the
+repository. The default configs use project-relative paths:
 
 ```text
-data/NYU_Depth
-data/MFNet
-data/MCUBES
+data/
 pretrained/dinov3_*.pth
 save_checkpoints/<dataset>/*.ckpt
 ```
 
-You can override any path from the command line, for example
+Any path can be overridden from the command line, for example
 `pytorch_data_dir=/path/to/NYU_Depth` or `pretrained_weights=/path/to/dinov3.pth`.
 
-## Environment
+## Environments
+
+UniM2 uses a single Conda environment named `UMSS`.
 
 ```bash
 conda env create -f environment.yml
 conda activate UMSS
 ```
+
+## Datasets
+
+Please download each dataset from its official release page and place it under
+`data/` as shown below. If your datasets live elsewhere, keep the same internal
+folder structure and pass `pytorch_data_dir=/your/path`.
+
+| Dataset | Download | Modalities Used | Config Key | Expected Root |
+| :-- | :-- | :-- | :-- | :-- |
+| **[NYU Depth V2](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)** | **[Official Page](https://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html)** | RGB + HHA/depth | `dataset_name: nyu` | `data/NYU_Depth/nyu` |
+| **[MFNet](https://github.com/haqishen/MFNet-pytorch)** | **[Google Drive](https://drive.google.com/drive/folders/18BQFWRfhXzSuMloUmtiBRFrr6NSrf8Fw?usp=sharing)** | RGB + thermal | `dataset_name: mfnet` | `data/MFNet/mfnet` |
+| **[MCubeS](https://github.com/kyotovision-public/multimodal-material-segmentation)** | **[Google Drive](https://drive.google.com/file/d/14egTCyC0Pampb7imrXVwaDRffHN7FZxh/view?usp=sharing)** | RGB + AoLP/DoLP/NIR | `dataset_name: mcubes` | `data/MCUBES/MCubeS` |
+
+The expected project layout is:
+
+```text
+data/
+|-- NYU_Depth/
+|   `-- nyu/
+|       |-- RGB/
+|       |-- HHA/
+|       |-- Labels/
+|       |-- train.txt
+|       `-- val.txt
+|-- MFNet/
+|   `-- mfnet/
+|       |-- images/
+|       |-- labels/
+|       |-- train.txt
+|       `-- test.txt
+`-- MCUBES/
+    `-- MCubeS/
+        |-- polL_color/
+        |-- polL_aolp_sin/
+        |-- polL_aolp_cos/
+        |-- polL_dolp/
+        |-- NIR_warped/
+        |-- GT/
+        `-- list_folder/
+```
+
+MFNet stores RGB and thermal data in one 4-channel PNG. Keep the original
+`images/*.png` files; UniM2 reads RGB from the first three channels and thermal
+from the fourth channel.
 
 ## Data Preparation
 
@@ -75,5 +130,5 @@ python src/eval_segmentation.py --config-name eval_config.yml
 ```
 
 Set `model_paths` and `pytorch_data_dir` in `src/configs/eval_config.yml` for
-the checkpoint and dataset you want to evaluate. Evaluation uses CRF
-post-processing by default; pass `run_crf=false` to report raw probe outputs.
+the checkpoint and dataset you want to evaluate. Raw evaluation is used by
+default; set `run_crf=true` to enable CRF post-processing.
