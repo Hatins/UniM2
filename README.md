@@ -18,21 +18,6 @@
   <a href="#evaluation"><b>Evaluation</b></a>
 </p>
 
-This repository has been simplified for the released workflow. It keeps the
-three datasets used in the paper: **NYU Depth V2**, **MFNet**, and **MCubeS**.
-
-Datasets, checkpoints, and DINOv3 pretrained weights are not included in the
-repository. The default configs use project-relative paths:
-
-```text
-data/
-pretrained/dinov3_*.pth
-save_checkpoints/<dataset>/*.ckpt
-```
-
-Any path can be overridden from the command line, for example
-`pytorch_data_dir=/path/to/NYU_Depth` or `pretrained_weights=/path/to/dinov3.pth`.
-
 ## Environments
 
 UniM2 uses a single Conda environment named `UMSS`.
@@ -81,6 +66,12 @@ MFNet stores RGB and thermal data in one 4-channel PNG. Keep the original
 `images/*.png` files; UniM2 reads RGB from the first three channels and thermal
 from the fourth channel.
 
+The dataset we provided already contains cropped data, and you can use the command below to generate by yourself.
+```bash
+python src/crop_datasets.py --config-name train_config_nyu.yml
+```
+
+
 ## Checkpoints
 
 Download the released UniM2 checkpoints from OneDrive and place them under
@@ -102,22 +93,6 @@ Download the released UniM2 checkpoints from OneDrive and place them under
 For MCubeS checkpoint names, `I` denotes RGB/intensity, `A` denotes AoLP,
 `D` denotes DoLP, and `N` denotes NIR.
 
-## Data Preparation
-
-If cropped data has not been generated yet, run:
-
-```bash
-python src/crop_datasets.py --config-name train_config_nyu.yml
-```
-
-Then precompute nearest neighbors for contrastive positive samples:
-
-```bash
-python src/precompute_knns.py --config-name train_config_nyu.yml
-```
-
-Swap `train_config_nyu.yml` for `train_config_mfnet.yml` or
-`train_config_mcubes.yml` as needed.
 
 ## Hyperparameter Search
 
