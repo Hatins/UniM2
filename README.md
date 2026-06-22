@@ -109,13 +109,41 @@ Search results are written to `optuna_results/`.
 
 ## Training
 
-After choosing hyperparameters, update the matching config file and train:
+The training pipeline consists of three steps.
+
+### 1. Precompute nearest neighbors
+
+Following [STEGO](https://github.com/mhamilton723/STEGO), we first precompute nearest neighbors for contrastive positive samples:
+
+```bash
+python src/precompute_knns.py --config-name train_config_nyu.yml
+```
+
+For convenience, the precomputed nearest-neighbor files are already included in our released dataset. Therefore, this step can be skipped if you use the provided data.
+
+### 2. Hyperparameter search
+Unsupervised semantic segmentation methods are usually sensitive to hyperparameter choices. We therefore recommend
+performing hyperparameter search for each dataset and model setting:
+
+```bash
+python src/hyperparameter_search.py --config_name train_config_nyu.yml
+```
+
+The search results provide the recommended hyperparameters for the corresponding configuration.
+
+### 3. Train the segmentation model
+
+After obtaining the searched hyperparameters, fill them into the corresponding configuration file, i.e., `src/configs/train_config_dataset.yml`. Then run:
 
 ```bash
 python src/train_segmentation.py --config-name train_config_nyu.yml
 ```
 
+You can replace `train_config_nyu.yml` with the configuration file for other datasets.
+
 ## Evaluation
+
+
 
 ```bash
 python src/eval_segmentation.py --config-name eval_config.yml
