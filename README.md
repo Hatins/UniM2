@@ -1,7 +1,7 @@
 # UMSS:Towards Unsupervised Multimodal Semantic Segmentation
 
 <p align="center">
-  <img src="Figures/framework.png" alt="UniM2 framework" width="85%">
+  <img src="figures/framework.png" alt="UniM2 framework" width="85%">
 </p>
 
 <p align="center">

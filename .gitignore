@@ -5,9 +5,13 @@ __pycache__/
 
 /data/
 /models/
-/pretrained/
+/pretrained/*
+!/pretrained/
+!/pretrained/README.md
 /checkpoints/
-/save_checkpoints/
+/save_checkpoints/*
+!/save_checkpoints/
+!/save_checkpoints/README.md
 /logs/
 /results/
 /wandb/
