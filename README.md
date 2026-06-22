@@ -93,20 +93,6 @@ Download the released UniM2 checkpoints from OneDrive and place them under
 For MCubeS checkpoint names, `I` denotes RGB/intensity, `A` denotes AoLP,
 `D` denotes DoLP, and `N` denotes NIR.
 
-
-## Hyperparameter Search
-
-The recommended workflow is to search hyperparameters first:
-
-```bash
-python src/hyperparameter_search.py \
-  --config_name train_config_nyu.yml \
-  --max_steps 7500 \
-  --n_trials 200
-```
-
-Search results are written to `optuna_results/`.
-
 ## Training
 
 The training pipeline consists of three steps.
@@ -139,10 +125,9 @@ After obtaining the searched hyperparameters, fill them into the corresponding c
 python src/train_segmentation.py --config-name train_config_nyu.yml
 ```
 
-You can replace `train_config_nyu.yml` with the configuration file for other datasets.
+You can replace `train_config_dataset.yml` with the configuration file for other datasets.
 
 ## Evaluation
-
 
 
 ```bash
