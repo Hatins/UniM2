@@ -1,4 +1,4 @@
-# UMSS:Towards Unsupervised Multimodal Semantic Segmentation
+# UMSS: Towards Unsupervised Multimodal Semantic Segmentation
 
 <p align="center">
   <img src="figures/framework.png" alt="UniM2 framework" width="85%">
@@ -126,6 +126,19 @@ python src/train_segmentation.py --config-name train_config_nyu.yml
 ```
 
 You can replace `train_config_dataset.yml` with the configuration file for other datasets.
+
+### 4. Monitor training with Weights & Biases
+
+We recommend using [Weights & Biases](https://wandb.ai/) to monitor UniM2
+training. Before launching training, run `wandb login` and set `entity` in the
+corresponding config if you want logs to appear under a specific W&B team or
+account. During training, W&B is useful for checking the contrastive loss and
+validation mIoU curves.
+
+<p align="center">
+  <img src="figures/training_loss.png" alt="Training loss curve" width="48%">
+  <img src="figures/training_miou.png" alt="Validation mIoU curve" width="48%">
+</p>
 
 ## Evaluation
 
