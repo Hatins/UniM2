@@ -67,7 +67,7 @@ class Dinov3Featurizer(nn.Module):
         self.model = arch_map[arch](pretrained=False)
         for param in self.model.parameters():
             param.requires_grad = False
-        self.model.eval().cuda()
+        self.model.eval()
 
         self.dropout = nn.Dropout2d(p=0.1)
         self._load_pretrained_weights(cfg.get("pretrained_weights", None))

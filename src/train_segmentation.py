@@ -14,6 +14,7 @@ from omegaconf import DictConfig, OmegaConf
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.strategies import DDPStrategy
 from torch.utils.data import DataLoader
 from torchvision import transforms as T
 
@@ -67,9 +68,15 @@ class LitUnsupervisedSegmenter(pl.LightningModule):
 
         self.net = Dinov3Featurizer(dim, cfg)
         self.train_cluster_probe = ClusterLookup(dim, n_classes)
+        for param in self.train_cluster_probe.parameters():
+            param.requires_grad = False
+
         self.cluster_probe = ClusterLookup(dim, n_classes + cfg.extra_clusters)
         self.linear_probe = nn.Conv2d(dim, n_classes, kernel_size=1)
         self.decoder = nn.Conv2d(dim, self.net.n_feats, kernel_size=1)
+        if cfg.rec_weight <= 0:
+            for param in self.decoder.parameters():
+                param.requires_grad = False
 
         self.cluster_metrics = UnsupervisedMetrics("test/cluster/", n_classes, cfg.extra_clusters, True)
         self.linear_metrics = UnsupervisedMetrics("test/linear/", n_classes, 0, False)
@@ -377,6 +384,12 @@ def my_app(cfg: DictConfig) -> None:
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu_ids
     logical_gpu_ids = list(range(len(gpu_ids.split(","))))
 
+    if len(logical_gpu_ids) > 1 and cfg.get("force_math_sdp_for_ddp", True):
+        torch.backends.cuda.enable_flash_sdp(False)
+        torch.backends.cuda.enable_mem_efficient_sdp(False)
+        torch.backends.cuda.enable_math_sdp(True)
+        print("Disabled flash/memory-efficient SDP for DDP stability.")
+
     print(OmegaConf.to_yaml(cfg))
     for path in (join(cfg.output_root, "data"), join(cfg.output_root, "logs"), join(cfg.output_root, "checkpoints")):
         os.makedirs(path, exist_ok=True)
@@ -402,7 +415,14 @@ def my_app(cfg: DictConfig) -> None:
     else:
         gpu_args = dict(devices=logical_gpu_ids, accelerator="gpu", val_check_interval=cfg.get("val_freq", 10))
     if len(logical_gpu_ids) > 1:
-        gpu_args["strategy"] = "ddp_find_unused_parameters_true"
+        # All ranks use the same seed and load the same frozen DINO weights, so
+        # skipping DDP's initial state broadcast avoids fragile NCCL setup on
+        # recent multi-GPU systems while keeping gradient synchronization intact.
+        gpu_args["strategy"] = DDPStrategy(
+            find_unused_parameters=False,
+            broadcast_buffers=False,
+            init_sync=False,
+        )
 
     run_name = f"{cfg.dataset_name}_{cfg.experiment_name}_date_{datetime.now().strftime('%b%d_%H-%M-%S')}"
     checkpoint_callback = ModelCheckpoint(

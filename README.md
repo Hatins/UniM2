@@ -20,12 +20,26 @@
 
 ## Environments
 
-UniM2 uses a single Conda environment named `UMSS`.
+UniM2 uses a single Conda environment named `UMSS`. We recommend installing it
+with the provided script, which pins the fragile dependencies and installs
+PyTorch 2.11.0 with CUDA 12.8 wheels for recent NVIDIA GPUs:
 
 ```bash
-conda env create -f environment.yml
+bash scripts/install_umss_env.sh
 conda activate UMSS
 ```
+
+If an environment named `UMSS` already exists and you want to recreate it, run:
+
+```bash
+FORCE_RECREATE=1 bash scripts/install_umss_env.sh
+conda activate UMSS
+```
+
+For older GPUs or a different CUDA wheel, override `CUDA_WHEEL` and the matching
+PyTorch package versions. The original `environment.yml` is kept as a compact
+dependency reference, but the install script is the recommended path for
+reproducible setup.
 
 ## Datasets
 
@@ -68,7 +82,7 @@ from the fourth channel.
 
 The dataset we provided already contains cropped data, and you can use the command below to generate by yourself.
 ```bash
-python src/crop_datasets.py --config-name train_config_nyu.yml
+python src/crop_datasets.py --config-name=train_config_nyu.yml
 ```
 
 
@@ -106,7 +120,7 @@ Before training:
 Following [STEGO](https://github.com/mhamilton723/STEGO), we first precompute nearest neighbors for contrastive positive samples:
 
 ```bash
-python src/precompute_knns.py --config-name train_config_nyu.yml
+python src/precompute_knns.py --config-name=train_config_nyu.yml
 ```
 
 For convenience, the precomputed nearest-neighbor files are already included in our released dataset. Therefore, this step can be skipped if you use the provided data.
@@ -126,10 +140,14 @@ The search results provide the recommended hyperparameters for the corresponding
 After obtaining the searched hyperparameters, fill them into the corresponding configuration file, i.e., `src/configs/train_config_dataset.yml`. Then run:
 
 ```bash
-python src/train_segmentation.py --config-name train_config_nyu.yml
+python src/train_segmentation.py --config-name=train_config_nyu.yml
 ```
 
 You can replace `train_config_dataset.yml` with the configuration file for other datasets.
+
+Note: Hydra-based scripts in this repository use the equals-sign form
+`--config-name=...`. The hyperparameter search script is argparse-based and
+therefore uses `--config_name ...`.
 
 ### 5. Monitor training with Weights & Biases
 
@@ -144,11 +162,12 @@ validation mIoU curves.
   <img src="figures/training_miou.png" alt="Validation mIoU curve" width="48%">
 </p>
 
+
 ## Evaluation
 
 
 ```bash
-python src/eval_segmentation.py --config-name eval_config.yml
+python src/eval_segmentation.py --config-name=eval_config.yml
 ```
 
 Set `model_paths` and `pytorch_data_dir` in `src/configs/eval_config.yml` for
