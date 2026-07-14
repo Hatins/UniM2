@@ -1,4 +1,4 @@
-# UMSS: Towards Unsupervised Multimodal Semantic Segmentation
+# UMSS: Towards Unsupervised Multimodal Semantic Segmentation (ECCV 2026)
 
 <p align="center">
   <img src="figures/framework.png" alt="UniM2 framework" width="85%">
@@ -94,10 +94,14 @@ For MCubeS checkpoint names, `I` denotes RGB/intensity, `A` denotes AoLP,
 `D` denotes DoLP, and `N` denotes NIR.
 
 ## Training
+### 1. Preparation
 
-The training pipeline consists of three steps.
+Before training:
 
-### 1. Precompute nearest neighbors
+1. Download the [DINOv3](https://github.com/facebookresearch/dinov3) **ViT-B/16** and **ViT-S/16** checkpoints and place them in `UniM2/pretrained/`.
+2. Set `pytorch_data_dir` in the configuration file to your dataset path, e.g., `./__dataset__/UMSS/NYU_Depth`.
+
+### 2. Precompute nearest neighbors
 
 Following [STEGO](https://github.com/mhamilton723/STEGO), we first precompute nearest neighbors for contrastive positive samples:
 
@@ -107,7 +111,7 @@ python src/precompute_knns.py --config-name train_config_nyu.yml
 
 For convenience, the precomputed nearest-neighbor files are already included in our released dataset. Therefore, this step can be skipped if you use the provided data.
 
-### 2. Hyperparameter search
+### 3. Hyperparameter search
 Unsupervised semantic segmentation methods are usually sensitive to hyperparameter choices. We therefore recommend
 performing hyperparameter search for each dataset and model setting:
 
@@ -117,7 +121,7 @@ python src/hyperparameter_search.py --config_name train_config_nyu.yml
 
 The search results provide the recommended hyperparameters for the corresponding configuration.
 
-### 3. Train the segmentation model
+### 4. Train the segmentation model
 
 After obtaining the searched hyperparameters, fill them into the corresponding configuration file, i.e., `src/configs/train_config_dataset.yml`. Then run:
 
@@ -127,7 +131,7 @@ python src/train_segmentation.py --config-name train_config_nyu.yml
 
 You can replace `train_config_dataset.yml` with the configuration file for other datasets.
 
-### 4. Monitor training with Weights & Biases
+### 5. Monitor training with Weights & Biases
 
 We recommend using [Weights & Biases](https://wandb.ai/) to monitor UniM2
 training. Before launching training, run `wandb login` and set `entity` in the
