@@ -11,8 +11,12 @@ res: 320
 batch_size: 16
 num_workers: 4
 num_vis_images: 8
+vis_min_valid_ratio: 0.05
+vis_candidate_limit: 200
+vis_score: "miou"
+vis_subdir: "selected"
 
-run_crf: true
+run_crf: false
 crf_num_workers: 4
 
 model_paths:
